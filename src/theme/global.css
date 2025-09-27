@@ -1,0 +1,22 @@
+
+ion-app {
+  display: block;
+}
+
+
+ion-button {
+  --color: white;
+}
+
+ion-item {
+  --background: white;
+}
+
+
+ion-label {
+  color: var(--ion-color-dark);
+}
+
+ion-input {
+  color: var(--ion-color-dark);
+}
