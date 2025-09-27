@@ -24,11 +24,12 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         return;
       }
 
-      console.log('Iniciando login...');
+      console.log('Iniciando login con:', { email, password });
       await login(email, password);
       
       // Debug: ver usuarios registrados
-      await debugUsers();
+      const users = await debugUsers();
+      console.log('Usuarios disponibles después de login:', users);
       
       if (onLogin) {
         onLogin();
@@ -37,7 +38,20 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       
     } catch (error: any) {
       console.error('Error completo en login:', error);
-      setAlertMessage(error.message || 'Error en login: revisa credenciales');
+      
+      // Mostrar información detallada del error
+      const users = await debugUsers();
+      const userExists = users.find((u: any) => u.email === email);
+      
+      let errorDetail = `Error: ${error.message}\n\n`;
+      errorDetail += `Usuarios registrados: ${users.length}\n`;
+      errorDetail += `¿Usuario existe?: ${userExists ? 'SÍ' : 'NO'}\n`;
+      if (userExists) {
+        errorDetail += `Contraseña guardada: "${userExists.password}"\n`;
+        errorDetail += `Contraseña ingresada: "${password}"`;
+      }
+      
+      setAlertMessage(errorDetail);
       setShowAlert(true);
     }
   };
@@ -61,6 +75,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                   value={email}
                   onIonInput={e => setEmail(e.detail.value!)}
                   placeholder="ejemplo@mail.com"
+                  required
                 />
               </IonItem>
 
@@ -71,6 +86,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                   value={password}
                   onIonInput={e => setPassword(e.detail.value!)}
                   placeholder="Escribe tu contraseña"
+                  required
                 />
               </IonItem>
 
